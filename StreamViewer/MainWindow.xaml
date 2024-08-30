@@ -1,0 +1,121 @@
+﻿<Window x:Class="StreamViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Multi Web Viewer" Height="720" Width="1280"
+        Background="#1E1E1E" Foreground="White" WindowStyle="None">
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="0"
+            CornerRadius="0"
+            GlassFrameThickness="0"
+            ResizeBorderThickness="5"
+            UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+    <Grid>
+        <DockPanel Background="#333333" Height="30" MouseDown="TitleBar_MouseDown" VerticalAlignment="Top">
+            <TextBlock Text="Multi Web Viewer" VerticalAlignment="Center" Padding="10" Foreground="White"/>
+            <Button Content="X" Width="30" Height="30" Click="CloseButton_Click" DockPanel.Dock="Right" Background="#444444" Foreground="White"/>
+            <Button Content="🔲" Width="30" Height="30" Click="MaximizeButton_Click" DockPanel.Dock="Right" Background="#444444" Foreground="White"/>
+            <Button Content="➖" Width="30" Height="30" Click="MinimizeButton_Click" DockPanel.Dock="Right" Background="#444444" Foreground="White" HorizontalAlignment="Right"/>
+        </DockPanel>
+        <Grid Margin="0,30,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Focus Frame -->
+            <Border Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderBrush="#444444" BorderThickness="1" Background="#2D2D2D">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="FocusTitle" Text="Focus Stream" Background="#444444" Padding="5"/>
+                    <ContentControl x:Name="FocusView" Grid.Row="1"/>
+                </Grid>
+            </Border>
+
+            <!-- Monitor Frame 1 -->
+            <Border Grid.Column="0" Grid.Row="0" BorderBrush="#444444" BorderThickness="1" Background="#2D2D2D">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Background="#333333">
+                        <Button Content="Focus" DockPanel.Dock="Right" Click="FocusButton_Click" Tag="0"/>
+                        <TextBlock x:Name="Stream1Title" Text="Stream 1" Padding="5"/>
+                    </DockPanel>
+                    <ContentControl x:Name="MonitorView1" Grid.Row="1"/>
+                </Grid>
+            </Border>
+
+            <!-- Monitor Frame 2 -->
+            <Border Grid.Column="1" Grid.Row="0" BorderBrush="#444444" BorderThickness="1" Background="#2D2D2D">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Background="#333333">
+                        <Button Content="Focus" DockPanel.Dock="Right" Click="FocusButton_Click" Tag="1"/>
+                        <TextBlock x:Name="Stream2Title" Text="Stream 2" Padding="5"/>
+                    </DockPanel>
+                    <ContentControl x:Name="MonitorView2" Grid.Row="1"/>
+                </Grid>
+            </Border>
+
+            <!-- Monitor Frame 3 -->
+            <Border Grid.Column="2" Grid.Row="0" BorderBrush="#444444" BorderThickness="1" Background="#2D2D2D">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Background="#333333">
+                        <Button Content="Focus" DockPanel.Dock="Right" Click="FocusButton_Click" Tag="2"/>
+                        <TextBlock x:Name="Stream3Title" Text="Stream 3" Padding="5"/>
+                    </DockPanel>
+                    <ContentControl x:Name="MonitorView3" Grid.Row="1"/>
+                </Grid>
+            </Border>
+
+            <!-- Monitor Frame 4 -->
+            <Border Grid.Column="0" Grid.Row="1" BorderBrush="#444444" BorderThickness="1" Background="#2D2D2D">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Background="#333333">
+                        <Button Content="Focus" DockPanel.Dock="Right" Click="FocusButton_Click" Tag="3"/>
+                        <TextBlock x:Name="Stream4Title" Text="Stream 4" Padding="5"/>
+                    </DockPanel>
+                    <ContentControl x:Name="MonitorView4" Grid.Row="1"/>
+                </Grid>
+            </Border>
+
+            <!-- Monitor Frame 5 -->
+            <Border Grid.Column="0" Grid.Row="2" BorderBrush="#444444" BorderThickness="1" Background="#2D2D2D">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Background="#333333">
+                        <Button Content="Focus" DockPanel.Dock="Right" Click="FocusButton_Click" Tag="4"/>
+                        <TextBlock x:Name="Stream5Title" Text="Stream 5" Padding="5"/>
+                    </DockPanel>
+                    <ContentControl x:Name="MonitorView5" Grid.Row="1"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
