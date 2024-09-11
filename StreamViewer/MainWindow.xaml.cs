@@ -1,19 +1,18 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.IO;
 
 namespace StreamViewer
 {
     public partial class MainWindow : Window
     {
         private List<ContentControl> _streamViews;
-        private Dictionary<ContentControl, (string Url, string Title)> _streamInfo = new Dictionary<ContentControl, (string, string)>();
         private Dictionary<ContentControl, TextBlock> _titleBlocks;
+        private string START_PAGE;
 
         public MainWindow()
         {
@@ -28,24 +27,22 @@ namespace StreamViewer
                 { MonitorView4, Stream4Title },
                 { MonitorView5, Stream5Title }
             };
+
+            string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string startDirectory = Path.Combine(currentDirectory, "start");
+            START_PAGE = new Uri(Path.Combine(startDirectory, "index.html")).AbsoluteUri;
+
             Loaded += MainWindow_Loaded;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var streams = File.ReadAllLines("streams.txt")
-                .Select(line => line.Split(','))
-                .Where(parts => parts.Length == 2)
-                .Select(parts => (Url: parts[0].Trim(), Title: parts[1].Trim()))
-                .ToList();
-
-            for (int i = 0; i < Math.Min(streams.Count, _streamViews.Count); i++)
+            foreach (var streamView in _streamViews)
             {
                 try
                 {
                     var webView = new Microsoft.Web.WebView2.Wpf.WebView2();
-                    _streamViews[i].Content = webView;
-                    _streamInfo[_streamViews[i]] = streams[i];
+                    streamView.Content = webView;
 
                     await webView.EnsureCoreWebView2Async();
 
@@ -54,22 +51,35 @@ namespace StreamViewer
                     webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
                     webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
 
-                    webView.CoreWebView2.NavigationCompleted += (s, args) =>
-                    {
-                        if (!args.IsSuccess)
-                        {
-                            Dispatcher.Invoke(() => MessageBox.Show($"Navigation failed for {streams[i].Url}: {args.WebErrorStatus}"));
-                        }
-                    };
+                    webView.CoreWebView2.NavigationCompleted += WebView_NavigationCompleted;
+                    webView.CoreWebView2.DocumentTitleChanged += WebView_DocumentTitleChanged;
 
-                    UpdateStreamTitle(_streamViews[i], streams[i].Title);
-                    webView.CoreWebView2.Navigate(streams[i].Url);
+                    webView.CoreWebView2.Navigate(START_PAGE);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error loading stream {streams[i].Url}: {ex.Message}");
+                    MessageBox.Show($"Error loading webpage: {ex.Message}");
                 }
             }
+        }
+
+        private void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            if (!e.IsSuccess)
+            {
+                Dispatcher.Invoke(() => MessageBox.Show($"Navigation failed: {e.WebErrorStatus}"));
+            }
+        }
+
+        private void WebView_DocumentTitleChanged(object sender, object e)
+        {
+            var webView = sender as Microsoft.Web.WebView2.Wpf.WebView2;
+            if (webView == null) return;
+
+            var streamView = _streamViews.Find(view => view.Content == webView);
+            if (streamView == null) return;
+
+            UpdateStreamTitle(streamView, webView.CoreWebView2.DocumentTitle);
         }
 
         private void UpdateStreamTitle(ContentControl streamView, string title)
@@ -97,14 +107,14 @@ namespace StreamViewer
                     monitorView.Content = focusView.Content;
                     focusView.Content = tempContent;
 
-                    // Swap stream info
-                    var tempInfo = _streamInfo[monitorView];
-                    _streamInfo[monitorView] = _streamInfo[focusView];
-                    _streamInfo[focusView] = tempInfo;
-
-                    // Update titles
-                    UpdateStreamTitle(focusView, _streamInfo[focusView].Title);
-                    UpdateStreamTitle(monitorView, _streamInfo[monitorView].Title);
+                    if (focusView.Content is Microsoft.Web.WebView2.Wpf.WebView2 focusWebView)
+                    {
+                        UpdateStreamTitle(focusView, focusWebView.CoreWebView2.DocumentTitle);
+                    }
+                    if (monitorView.Content is Microsoft.Web.WebView2.Wpf.WebView2 monitorWebView)
+                    {
+                        UpdateStreamTitle(monitorView, monitorWebView.CoreWebView2.DocumentTitle);
+                    }
                 }
             }
         }
